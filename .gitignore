@@ -1,0 +1,9 @@
+# Directories
+.vs/
+bin/
+config/
+
+# Files
+*.user
+*.aps
+*.
