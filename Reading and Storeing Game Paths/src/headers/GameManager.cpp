@@ -158,13 +158,13 @@ void GameManager::loopThroughSaveArray()
 {
     for (int i = 0; i < _games.size(); i++)
     {
-        std::cout << _games[i] << std::endl;
+        std::cout << _games[i] << "\n" << std::endl;
     }
 }
 
 // Opens Path From JSON file
 // TODO: Handle empty paths, and throw and exception if the file is not an .exe
-void GameManager::openGame(const std::string& gamename)
+bool GameManager::openGame(const std::string& gamename)
 {
     try
     {
@@ -176,7 +176,7 @@ void GameManager::openGame(const std::string& gamename)
         if (fileData.find(gamename) == fileData.end())
         {
             std::cout << "Game Not Found!" << std::endl;
-            return;
+            return false;
         }
 
         const std::string tempArgs = fileData[gamename].value("command_args", "");
@@ -185,7 +185,7 @@ void GameManager::openGame(const std::string& gamename)
         if (tempPath.empty())
         {
             std::cout << "Game Path not specified for '" << gamename << "'" << std::endl;
-            return;
+            return false;
         }
 
         const wchar_t* convertedArgs = convertStrToLPCWSTR(tempArgs); // Converts std::string to type const wchar_t* | LPCWSTR
@@ -207,16 +207,18 @@ void GameManager::openGame(const std::string& gamename)
 
         delete[] convertedPath;
         delete[] convertedArgs;
-        return;
+        return true;
     }
     catch (const json::parse_error& e)
     {
         std::cout << "JSON Parse Error: " << e.what() << std::endl;
+        return false;
     }
     catch (const json::type_error& e)
     {
         std::cout << "JSON Type Error: " << e.what() << std::endl;
         std::cout << "Game '" << gamename << "' Probably wasnt added correctly" << std::endl;
+        return false;
     }
 }
 

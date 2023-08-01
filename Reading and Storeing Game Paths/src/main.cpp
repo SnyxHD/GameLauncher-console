@@ -53,7 +53,12 @@ int main()
 				std::string name;
 				std::cout << "\nEnter Game: \n> ";
 				std::getline(std::cin, name);
-				GameManager.openGame(name);
+				bool status = GameManager.openGame(name);
+				if (status)
+				{
+					choice = 6;
+					break;
+				}
 				std::cout << "Press Enter to continue...";
 				std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 				std::system("cls");

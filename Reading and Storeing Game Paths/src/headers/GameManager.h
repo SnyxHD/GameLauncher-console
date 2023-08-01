@@ -18,7 +18,7 @@ public:
 
 	void printGames();
 
-	void openGame(const std::string& gamename);
+	bool openGame(const std::string& gamename);
 
 	void deleteGames();
 
