@@ -31,6 +31,9 @@ void GameManager::addGame(const std::string& path, const std::string& name, cons
 
             file << jsonIn.dump(4); // Write JSON to file with indentation of 4 spaces
             file.close();
+
+            setReserveSize();
+            loadFromFile();
             return;
         }
 
@@ -54,6 +57,9 @@ void GameManager::addGame(const std::string& path, const std::string& name, cons
 
         file << jsonIn.dump(4); // Write JSON to file with indentation of 4 spaces
         file.close();
+
+        setReserveSize();
+        loadFromFile();
 
     }
     catch (const json::type_error& e) // Catches and Prints out any Type Errors that occur in this function
@@ -271,7 +277,7 @@ const wchar_t* GameManager::convertStrToLPCWSTR(const std::string& tempStr)
 }
 
 // Set the Reserve Size of _games Array
-void GameManager::setReserveSize(const int size)
+void GameManager::setReserveSize()
 {
-    GameManager::_games.reserve(size);
+    GameManager::_games.reserve(_games.size() + _games.size() / 2);
 }

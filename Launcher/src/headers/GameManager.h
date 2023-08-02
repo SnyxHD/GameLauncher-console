@@ -26,6 +26,6 @@ public:
 
 	const wchar_t* convertStrToLPCWSTR(const std::string& tempStr);
 
-	void setReserveSize(const int size);
+	void setReserveSize();
 };
 

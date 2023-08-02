@@ -4,7 +4,7 @@
 int main()
 {
 	GameManager GameManager;
-	GameManager.setReserveSize(100);
+	GameManager.setReserveSize();
 
 	int choice;
 
@@ -39,7 +39,6 @@ int main()
 				std::getline(std::cin, args);
 				GameManager.addGame(path, name, args);
 				std::system("cls");
-				GameManager.loadFromFile();
 				break;
 			}
 			case 2: 
