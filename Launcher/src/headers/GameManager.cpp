@@ -6,11 +6,11 @@ GameManager::GameManager() { checkForDir(); };
 // Deconstructor for class, called when the class goes out of scope
 GameManager::~GameManager() { std::cout << "Destroyed Object" << std::endl; };
 
+std::string config_path = "config/Game_Paths.json";
+
 // Add a new game path to the JSON file
 void GameManager::addGame(const std::string& path, const std::string& name, const std::string& args)
 {
-    std::string config_path = "config/Game_Paths.json";
-
     json jsonData = json::object();
     std::fstream jsonFile(config_path); // Use the more generalized fstream so the variable can be reused for reading and writing
 
@@ -116,34 +116,34 @@ void GameManager::loadFromFile()
 // Print The List of Games Stored in the JSON file.
 void GameManager::printGames()
 {
-    // TODO: Print All The Games Stored in text File
-    json Data;
-    std::ifstream file("config/Game_Paths.json");
+    json jsonData;
+    std::fstream jsonFile(config_path); // Use the more generalized fstream so the variable can be reused for reading and writing
 
+    // Check if the file is open and valid
+    if (jsonFile.is_open()) {
+        // Read the content of the file into a string
+        std::string jsonString((std::istreambuf_iterator<char>(jsonFile)), std::istreambuf_iterator<char>());
 
-    try
-    {
-        // Check if file is empty or readable before parsing json data
-        if (file.peek() == std::ifstream::traits_type::eof())
-        {
-            std::cout << "File Empty Or Not Readable!" << std::endl;
-            return;
+        // Check if the file is empty
+        if (!jsonString.empty()) {
+            // Attempt to parse the content as JSON
+            try {
+                jsonData = json::parse(jsonString);
+            }
+            catch (const json::parse_error& e) {
+                std::cerr << "Error parsing JSON: " << e.what() << std::endl;
+                return;
+            }
         }
 
-        file >> Data;
-
-        for (auto i = Data.begin(); i != Data.end(); ++i)
+        for (auto i = jsonData.begin(); i != jsonData.end(); ++i)
         {
             std::cout << i.key() << std::endl;
         }
-    }
-    catch (json::parse_error& e)
-    {
-        std::cout << "JSON Parse Error" << e.what() << std::endl;
-        return;
-    }
+        std::cout << "--------------------------------------" << std::endl;
 
-    std::cout << "--------------------------------------" << std::endl;
+        jsonFile.close();
+    }
 }
 
 void GameManager::loopThroughSaveArray()
