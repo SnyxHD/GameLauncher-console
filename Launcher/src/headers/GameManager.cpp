@@ -9,75 +9,61 @@ GameManager::~GameManager() { std::cout << "Destroyed Object" << std::endl; };
 // Add a new game path to the JSON file
 void GameManager::addGame(const std::string& path, const std::string& name, const std::string& args)
 {
-    try
-    {
+    std::string config_path = "config/Game_Paths.json";
 
-        json jsonIn; // JSON object to store the game paths.
-        std::ifstream jsonData("config/Game_Paths.json"); // Input file stream to read JSON data.
+    json jsonData = json::object();
+    std::fstream jsonFile(config_path); // Use the more generalized fstream so the variable can be reused for reading and writing
 
-        // Check if the file is empty or not readable
-        if (jsonData.peek() == std::ifstream::traits_type::eof())
-        {
-            // The file is empty or not readable, create a new JSON object
-            jsonIn = json::object();
-            jsonIn["game_name", name]["game_path"] = path;
-            jsonIn["game_name", name]["command_args"] = args;
+    // Check if the file is open and valid
+    if (jsonFile.is_open()) {
+        // Read the content of the file into a string
+        std::string jsonString((std::istreambuf_iterator<char>(jsonFile)), std::istreambuf_iterator<char>());
 
-            std::ofstream file("config/Game_Paths.json");
-            if (!file.is_open())
-            {
-                std::cout << "ERROR COULD NOT OPEN FILE" << std::endl;
+        // Check if the file is empty
+        if (!jsonString.empty()) {
+            // Attempt to parse the content as JSON
+            try {
+                jsonData = json::parse(jsonString);
+                std::cout << "Successfully loaded config file." << std::endl;
             }
-
-            file << jsonIn.dump(4); // Write JSON to file with indentation of 4 spaces
-            file.close();
-
-            setReserveSize();
-            loadFromFile();
-            return;
+            catch (const json::parse_error& e) {
+                std::cerr << "Error parsing JSON: " << e.what() << std::endl;
+                return;
+            }
         }
 
-        // The file is not empty, parse the existing JSON data
+        jsonFile.close();
+    }
 
-        /* jsonIn = json::parse(jsonData); : We Use jsonData >> jsonIn instead because it provides a more concise and straightforward
-        way to read and parse JSON data from the file stream, 
-        and it fits well with the specific use case in the GameManager::addGame function. */
+    // Open config file as write
+    jsonFile.open(config_path, std::ios::out | std::ios::trunc);
 
-        jsonData >> jsonIn; // Read data from the file into jsonIn
-        jsonData.close(); // Close File After Reading to avoid conflicts when opening the file for writing later.
+    if (jsonFile.is_open()) {
+        // Add new game to jsonData
+        jsonData[name] = {
+            { "game_path", path },
+            { "command_args", args}
+        };
 
-        jsonIn["game_name", name]["game_path"] = path;
-        jsonIn["game_name", name]["command_args"] = args;
-
-        std::ofstream file("config/Game_Paths.json");
-        if (!file.is_open())
-        {
-            std::cout << "ERROR COULD NOT OPEN FILE" << std::endl;
-        }
-
-        file << jsonIn.dump(4); // Write JSON to file with indentation of 4 spaces
-        file.close();
+        // Dump jsonData into config file
+        jsonFile << jsonData.dump(4);
+        jsonFile.close();
 
         setReserveSize();
         loadFromFile();
+        return;
+    }
 
-    }
-    catch (const json::type_error& e) // Catches and Prints out any Type Errors that occur in this function
-    {
-        std::cout << "JSON Type Error: " << e.what() << std::endl;
-    }
-    catch (const std::exception& e) // Catches and Prints out any Exceptions that occur in this function
-    {
-        std::cout << "Exception: " << e.what() << std::endl;
-    }
+    std::cout << "Could not open config file." << std::endl;
+    return;
 }
 
 // Stores all the Data From the JSON file into a vector array of type JSON
 void GameManager::loadFromFile()
 {
-	// TODO: Load All The Games from Json file into a std::vector<>
-    
-        _games.clear(); // Clear the existing games vector before loading from file.
+    // TODO: Load All The Games from Json file into a std::vector<>
+
+    _games.clear(); // Clear the existing games vector before loading from file.
 
     try
     {
@@ -130,7 +116,7 @@ void GameManager::loadFromFile()
 // Print The List of Games Stored in the JSON file.
 void GameManager::printGames()
 {
-	// TODO: Print All The Games Stored in text File
+    // TODO: Print All The Games Stored in text File
     json Data;
     std::ifstream file("config/Game_Paths.json");
 
@@ -143,7 +129,7 @@ void GameManager::printGames()
             std::cout << "File Empty Or Not Readable!" << std::endl;
             return;
         }
-        
+
         file >> Data;
 
         for (auto i = Data.begin(); i != Data.end(); ++i)
@@ -174,7 +160,7 @@ bool GameManager::openGame(const std::string& gamename)
 {
     try
     {
-	    // TODO: Open File containing all saved games and search for game name and open it
+        // TODO: Open File containing all saved games and search for game name and open it
         json fileData;
         std::ifstream file("config/Game_Paths.json");
 
@@ -197,9 +183,9 @@ bool GameManager::openGame(const std::string& gamename)
         const wchar_t* convertedArgs = convertStrToLPCWSTR(tempArgs); // Converts std::string to type const wchar_t* | LPCWSTR
         const wchar_t* convertedPath = convertStrToLPCWSTR(tempPath); // Converts std::string to type const wchar_t* | LPCWSTR
 
-        
+
         //ShellExecute(NULL, L"open", convertedPath, NULL, NULL, SW_SHOWNORMAL);
-        
+
         ShellExecute(NULL, L"open", convertedPath, convertedArgs, NULL, SW_SHOWNORMAL);
 
         if (!tempArgs.empty())
