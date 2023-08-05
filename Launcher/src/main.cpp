@@ -1,6 +1,8 @@
 #include "headers/headers.h"
 #include "headers/GameManager.h"
 
+using namespace std;
+
 int main()
 {
 	GameManager GameManager;
@@ -10,84 +12,82 @@ int main()
 
 	do
 	{
-		std::cout << "Menu:" << std::endl;
-		std::cout << "1. Add Game" << std::endl;
-		std::cout << "2. View All Games" << std::endl;
-		std::cout << "3. Open a Game" << std::endl;
-		std::cout << "4. Clear Games" << std::endl;
-		std::cout << "5. Load Save File" << std::endl;
-		std::cout << "6. Exit" << std::endl;
-		std::cout << "Enter Choice (1/2/3/4/5/6)" << std::endl;
+		cout << "Menu:" << endl;
+		cout << "1. Add Game" << endl;
+		cout << "2. View All Games" << endl;
+		cout << "3. Open a Game" << endl;
+		cout << "4. Clear Games" << endl;
+		cout << "5. Load Save File" << endl;
+		cout << "6. Exit" << endl;
+		cout << "Enter Choice (1/2/3/4/5/6)" << endl;
 
 
-		if (std::cin >> choice)
+		if (cin >> choice)
 		{
-			std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Ignore remaining input after reading choice
+			cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Ignore remaining input after reading choice
 
 			switch (choice)
 			{
 			case 1:
 			{
-				std::system("cls");
-				std::string name, path, args;
-
-				std::cout << "Enter Game Name: ";
-				std::getline(std::cin, name);
-				std::cout << "Enter Game Path: ";
-				std::getline(std::cin, path);
-				std::cout << "Any Command Arguments: ";
-				std::getline(std::cin, args);
+				system("cls");
+				string name, path, args;
+				cout << "Enter Game Name: ";
+				getline(cin, name);
+				cout << "Enter Game Path: ";
+				getline(cin, path);
+				cout << "Any Command Arguments: ";
+				getline(cin, args);
 				GameManager.addGame(path, name, args);
-				std::system("cls");
+				system("cls");
 				break;
 			}
-			case 2: 
+			case 2:
 			{
-				std::system("cls");
+				system("cls");
 				GameManager.printGames();
 				break;
 			}
 			case 3:
 			{
-				std::string name;
-				std::cout << "\nEnter Game: \n> ";
-				std::getline(std::cin, name);
+				string name;
+				cout << "\nEnter Game: \n> ";
+				getline(cin, name);
 				bool status = GameManager.openGame(name);
 				if (status)
 				{
 					choice = 6;
 					break;
 				}
-				std::cout << "Press Enter to continue...";
-				std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-				std::system("cls");
+				cout << "Press Enter to continue...";
+				cin.ignore(numeric_limits<streamsize>::max(), '\n');
+				system("cls");
 				break;
 			}
 			case 4:
 			{
-				std::system("cls");
+				system("cls");
 				GameManager.deleteGames();
 				break;
 			}
 			case 5:
 			{
-				std::system("cls");
+				system("cls");
 				GameManager.loadFromFile();
 				GameManager.loopThroughSaveArray();
-
 				break;
 			}
 			default:
-				std::system("cls");
-				std::cin.clear();
+				system("cls");
+				cin.clear();
 			}
 		}
 		else
 		{
-			std::system("cls");
-			std::cout << "Invalid input. Please enter a valid choice." << std::endl;
-			std::cin.clear(); // Clear the stream's error state
-			std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Ignore remaining input
+			system("cls");
+			cout << "Invalid input. Please enter a valid choice." << endl;
+			cin.clear(); // Clear the stream's error state
+			cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Ignore remaining input
 		}
 
 	} while (choice != 6);
