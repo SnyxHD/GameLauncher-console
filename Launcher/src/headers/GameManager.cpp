@@ -179,7 +179,7 @@ bool GameManager::openGame(const string& gamename)
                 }
                 catch (const json::parse_error& e) {
                     cerr << "Error parsing JSON: " << e.what() << endl;
-                    return;
+                    return false;
                 }
             }
 
