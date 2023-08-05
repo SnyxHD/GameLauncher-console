@@ -14,7 +14,7 @@ string config_path = "config/Game_Paths.json";
 void GameManager::addGame(const string& path, const string& name, const string& args)
 {
     json jsonData = json::object();
-    fstream jsonFile(config_path); // Use the more generalized fstream so the variable can be reused for reading and writing
+    fstream jsonFile(config_path);
 
     // Check if the file is open and valid
     if (jsonFile.is_open()) {
@@ -118,7 +118,7 @@ void GameManager::loadFromFile()
 void GameManager::printGames()
 {
     json jsonData;
-    fstream jsonFile(config_path); // Use the more generalized fstream so the variable can be reused for reading and writing
+    fstream jsonFile(config_path);
 
     // Check if the file is open and valid
     if (jsonFile.is_open()) {
@@ -155,13 +155,10 @@ void GameManager::loopThroughSaveArray()
     }
 }
 
-// Opens Path From JSON file
-// TODO: Handle empty paths, and throw and exception if the file is not an .exe
 bool GameManager::openGame(const string& gamename)
 {
     try
     {
-        // TODO: Open File containing all saved games and search for game name and open it
         json jsonData;
         ifstream jsonFile("config/Game_Paths.json");
 
